@@ -4,7 +4,11 @@ import whisper
 import os
 import tempfile
 import wave
-import openai
+from openai import OpenAI
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 class AudioRecorder:
     """
@@ -85,15 +89,14 @@ class ChatGPTProcessor:
     """
     Handles processing of transcribed text using the ChatGPT API.
     """
-    def __init__(self, api_key):
+    def __init__(self):
         """
-        Initialize the ChatGPTProcessor with an API key.
-        
-        Args:
-            api_key (str): OpenAI API key
+        Initialize the ChatGPTProcessor with API key from environment variables.
         """
-        self.api_key = api_key
-        openai.api_key = api_key
+        self.api_key = os.getenv('OPENAI_API_KEY')
+        if not self.api_key:
+            raise ValueError("OPENAI_API_KEY not found in environment variables")
+        self.client = OpenAI(api_key=self.api_key)
 
     def process_text(self, text):
         """
@@ -106,7 +109,7 @@ class ChatGPTProcessor:
             str: ChatGPT's response
         """
         try:
-            response = openai.ChatCompletion.create(
+            response = self.client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=[
                     {"role": "system", "content": "You are a helpful assistant."},
@@ -125,9 +128,7 @@ def main():
     # Initialize components
     recorder = AudioRecorder()
     transcriber = Transcriber()
-    
-    # Set your OpenAI API key here
-    chatgpt = ChatGPTProcessor("your-api-key-here")
+    chatgpt = ChatGPTProcessor()
     
     # Record audio
     audio_data = recorder.record_audio()
