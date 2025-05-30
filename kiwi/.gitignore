@@ -1,0 +1,26 @@
+# Python virtual environment
+venv/
+__pycache__/
+*.pyc
+
+# IDE files
+.vscode/
+.idea/
+
+# Environment variables
+.env
+
+# Large model files
+*.pt
+*.pth
+*.bin
+
+# Audio files
+*.wav
+*.mp3
+
+# Logs
+*.log
+
+# System files
+.DS_Store 
